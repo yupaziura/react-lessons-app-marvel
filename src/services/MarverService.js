@@ -24,10 +24,20 @@ class MarvelService {
         return this._transformData(res.data.results[0])
     }
 
+    checkDescr = (descr) => {
+        if (!descr) {
+            return 'Sorry, there is no information about this character. Got to homepage.'
+        }
+        else if (descr.length >= 200) {
+            return descr.substring(0, 200) + '...'
+        }
+        else {return descr}
+    }
+
     _transformData = (char) => {
          return {
             name: char.name,
-            description: char.description,
+            description: this.checkDescr(char.description),
             thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url
