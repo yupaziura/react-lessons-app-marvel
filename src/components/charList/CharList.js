@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import './charList.scss';
-import abyss from '../../resources/img/abyss.jpg';
 import MarvelService from '../../services/MarverService';
 
 class CharList extends Component{
@@ -37,14 +36,17 @@ class CharList extends Component{
             let styleImg;
             
             if (errorImg === item.thumbnail) {
-                styleImg = {objectFit: 'contain', transform: 'translate(-15px, -30px)'}
+                styleImg = {objectFit: 'fill'}
             }
             else {
                 styleImg = {objectFit: 'cover'}
             }
         
             return (
-                <li className="char__item" key={item.id}>
+                <li className="char__item" 
+                    key={item.id}
+                    onClick={() => {this.props.setId(item.id)}}
+                    >
                 <img src={item.thumbnail} alt="abyss" style={styleImg}/>
                 <div className="char__name">{item.name}</div>
             </li>
