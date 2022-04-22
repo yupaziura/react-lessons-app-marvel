@@ -1,25 +1,47 @@
+//basic
 import { Component } from 'react';
+
+// components
+import ErrorMessage from '../errorMessage/error';
+import Spinner from '../spinner/Spinner';
+
+// style
 import './charList.scss';
+
+// other
 import MarvelService from '../../services/MarverService';
 
 class CharList extends Component{
     constructor (props) {
         super(props);
         this.state = {
-            charList: []
+            charList: [],
+            error: false,
+            loading: true
         }    
     }
 
     marverService = new MarvelService();
 
-    onSetState = (char) => {
-        this.setState({charList: char})
+    onCharLoaded = (char) => {
+        this.setState({charList: char, loading: false}) // or {char}
     }
 
+    onError = () => {
+        this.setState({loading: false, error: true})
+    }
+
+    onCharLoading = () => {
+        this.setState({loading: true})
+    }
+
+
     onListLoad = () => {
+        this.onCharLoading();
         this.marverService
             .getAllCharacters()
-            .then(this.onSetState);
+            .then(this.onCharLoaded)
+            .catch(this.onError);
     }
 
     componentDidMount(){
@@ -51,12 +73,18 @@ class CharList extends Component{
                 <div className="char__name">{item.name}</div>
             </li>
             )
-        })
+        });
+
+        const list = this.state.charList? elem : null;
+        const spinner = this.state.loading? <Spinner/> : null;
+        const errorMess = this.state.error? <ErrorMessage/> : null;
 
         return (
             <div className="char__list">
                 <ul className="char__grid">
-                    {elem}
+                    {spinner}
+                    {errorMess}
+                    {list}
                 </ul>
                 <button className="button button__main button__long">
                     <div className="inner">load more</div>
