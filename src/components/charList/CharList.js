@@ -17,35 +17,56 @@ class CharList extends Component{
         this.state = {
             charList: [],
             error: false,
-            loading: true
+            loading: true,
+            newLoading: false,
+            offset: 1542,
+            end: false,
         }    
     }
 
     marverService = new MarvelService();
 
-    onCharLoaded = (char) => {
-        this.setState({charList: char, loading: false}) // or {char}
+    onCharLoaded = (newChar) => {
+        let isEnd;
+        console.log(newChar)
+        if (newChar.length < 9) {
+            isEnd = true
+        }
+        this.setState(({charList}) => ({
+            charList: [...charList, ...newChar], 
+            loading: false,
+            newLoading: false,
+            offset: this.state.offset + 9,
+            end: isEnd,
+            })) // or {char}
     }
 
     onError = () => {
-        this.setState({loading: false, error: true})
+        this.setState({loading: false, error: true, newLoading:false})
     }
 
     onCharLoading = () => {
         this.setState({loading: true})
     }
 
+    omListLoading = () => {
+        this.setState({newLoading: true})
+    }
 
     onListLoad = () => {
-        this.onCharLoading();
+        this.onRequest();
+    }
+
+    onRequest = (offset) => {
+        this.omListLoading();
         this.marverService
-            .getAllCharacters()
+            .getAllCharacters(offset)
             .then(this.onCharLoaded)
             .catch(this.onError);
     }
 
     componentDidMount(){
-        this.onListLoad();
+        this.onRequest();
     }
 
 
@@ -86,7 +107,11 @@ class CharList extends Component{
                     {errorMess}
                     {list}
                 </ul>
-                <button className="button button__main button__long">
+                <button className="button button__main button__long"
+                        disabled={this.state.newLoading}
+                        onClick={()=> {this.onRequest(this.state.offset)}}
+                        style={{display: this.state.end? 'none' : 'block'}}
+                        >
                     <div className="inner">load more</div>
                 </button>
             </div>
