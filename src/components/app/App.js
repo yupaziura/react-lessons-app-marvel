@@ -21,6 +21,8 @@ class App extends Component {
     }
 
     render () {
+
+        
         return (
             <div className="app">
                 <AppHeader/>
@@ -31,7 +33,7 @@ class App extends Component {
                     </ErrorBoundary>
                     <div className="char__content">
                         <ErrorBoundary>
-                            <CharList setId={this.setId}/>
+                            <CharList setId={this.setId} />
                         </ErrorBoundary>
                         <ErrorBoundary>
                             <CharInfo charId={this.state.charId}/>

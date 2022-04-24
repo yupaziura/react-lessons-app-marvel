@@ -1,5 +1,5 @@
 //basic
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 // components
 import ErrorMessage from '../errorMessage/error';
@@ -69,6 +69,11 @@ class CharList extends Component{
         this.onRequest();
     }
 
+    selectChar = (item) => {
+
+        this.props.setId(item.id);
+    }
+
 
 
 
@@ -84,15 +89,20 @@ class CharList extends Component{
             else {
                 styleImg = {objectFit: 'cover'}
             }
+
+            if( this.state.charList.id === item.id){
+                console.log('dfg')
+            }
+
         
             return (
-                <li className="char__item" 
+
+            <ListItem   item={item} 
+                    styleImg={styleImg}
                     key={item.id}
-                    onClick={() => {this.props.setId(item.id)}}
-                    >
-                <img src={item.thumbnail} alt="abyss" style={styleImg}/>
-                <div className="char__name">{item.name}</div>
-            </li>
+                    selectChar={() => { this.selectChar(item)}}
+                    />
+
             )
         });
 
@@ -101,7 +111,7 @@ class CharList extends Component{
         const errorMess = this.state.error? <ErrorMessage/> : null;
 
         return (
-            <div className="char__list">
+            <div className="char__list" key={0}>
                 <ul className="char__grid">
                     {spinner}
                     {errorMess}
@@ -116,6 +126,41 @@ class CharList extends Component{
                 </button>
             </div>
         )    
+    }
+}
+
+class ListItem extends Component {
+    constructor (props) {
+        super(props);
+        
+        this.state = {
+            selected: false
+        }
+    }
+
+    clickIt = () => {
+        this.setState({selected: true});
+        this.props.selectChar()
+    }
+
+    render () {
+
+        let selectedClass;
+        if (this.state.selected) {
+            selectedClass = 'char__item char__item_sel'
+        }
+        else {
+            selectedClass = 'char__item';
+        }
+
+        return (
+            <li className={selectedClass}
+                    onClick={this.clickIt}
+                    >
+                <img src={this.props.item.thumbnail} alt="abyss" style={this.props.styleImg}/>
+                <div className="char__name">{this.props.item.name}</div>
+            </li>
+        )
     }
 }
 
