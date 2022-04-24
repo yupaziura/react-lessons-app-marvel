@@ -79,32 +79,9 @@ class CharList extends Component{
 
     render () {
 
-        const elem = this.state.charList.map ((item) => {
-            const errorImg = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
-            let styleImg;
-            
-            if (errorImg === item.thumbnail) {
-                styleImg = {objectFit: 'fill'}
-            }
-            else {
-                styleImg = {objectFit: 'cover'}
-            }
-
-            if( this.state.charList.id === item.id){
-                console.log('dfg')
-            }
-
-        
-            return (
-
-            <ListItem   item={item} 
-                    styleImg={styleImg}
-                    key={item.id}
-                    selectChar={() => { this.selectChar(item)}}
-                    />
-
-            )
-        });
+        const elem = <ListItem charList={this.state.charList}
+                                selectChar={this.selectChar}
+        />
 
         const list = this.state.charList? elem : null;
         const spinner = this.state.loading? <Spinner/> : null;
@@ -134,32 +111,61 @@ class ListItem extends Component {
         super(props);
         
         this.state = {
-            selected: false
+            selected: false,
+            charId: null
         }
     }
 
-    clickIt = () => {
+    clickIt = (item) => {
         this.setState({selected: true});
-        this.props.selectChar()
+        this.setState({charId: item.id});
+        this.props.selectChar(item)
     }
 
     render () {
 
-        let selectedClass;
-        if (this.state.selected) {
-            selectedClass = 'char__item char__item_sel'
-        }
-        else {
-            selectedClass = 'char__item';
-        }
+        const elem = this.props.charList.map((item) => {
+            const errorImg = 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg';
+            let styleImg;
+            
+            if (errorImg === item.thumbnail) {
+                styleImg = {objectFit: 'fill'}
+            }
+            else {
+                styleImg = {objectFit: 'cover'}
+            }
+
+            let clazz;
+
+            if(this.state.charId !== item.id) {
+                clazz = 'char__item'
+            }
+            else {
+                clazz = 'char__item char__item_sel'
+            }
+
+
+        
+            return (
+
+                <li className={clazz}
+                    onClick = {()=>this.clickIt(item)}
+                    key={item.id}
+                >
+                    
+                    <img src={item.thumbnail} alt="abyss" style={styleImg}/>
+                    <div className="char__name">{item.name}</div>
+                </li>
+
+
+            )
+        });
+
 
         return (
-            <li className={selectedClass}
-                    onClick={this.clickIt}
-                    >
-                <img src={this.props.item.thumbnail} alt="abyss" style={this.props.styleImg}/>
-                <div className="char__name">{this.props.item.name}</div>
-            </li>
+            <>
+            {elem}
+            </>
         )
     }
 }
