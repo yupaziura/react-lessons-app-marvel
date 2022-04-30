@@ -1,5 +1,5 @@
 // basic
-import {Component} from 'react';
+import {Component, useState} from 'react';
 
 // components
 import AppHeader from "../appHeader/AppHeader";
@@ -11,39 +11,35 @@ import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 // style
 import decoration from '../../resources/img/vision.png';
 
-class App extends Component {
-    state = {
-        charId: null,
-    }
+const App = () => {
+    const [charId, setChar] = useState(null);
 
-    setId = (id) => {
-        this.setState({charId: id});
+    const setId = (id) => {
+        setChar(id)
     }
-
-    render () {
 
         
-        return (
-            <div className="app">
-                <AppHeader/>
-                <main>
-                    {/* we cat paste component inside error boundary */}
+    return (
+        <div className="app">
+            <AppHeader/>
+            <main>
+                {/* we cat paste component inside error boundary */}
+                <ErrorBoundary>
+                    <RandomChar/>
+                </ErrorBoundary>
+                <div className="char__content">
                     <ErrorBoundary>
-                        <RandomChar/>
+                        <CharList setId={setId} />
                     </ErrorBoundary>
-                    <div className="char__content">
-                        <ErrorBoundary>
-                            <CharList setId={this.setId} />
-                        </ErrorBoundary>
-                        <ErrorBoundary>
-                            <CharInfo charId={this.state.charId}/>
-                        </ErrorBoundary>
-                    </div>
-                    <img className="bg-decoration" src={decoration} alt="vision"/>
-                </main>
-            </div>
-        )    
-    }
+                    <ErrorBoundary>
+                        <CharInfo charId={charId}/>
+                    </ErrorBoundary>
+                </div>
+                <img className="bg-decoration" src={decoration} alt="vision"/>
+            </main>
+        </div>
+    )    
+    
 }
 
 export default App;
