@@ -1,5 +1,5 @@
 // basic
-import {Component, useState} from 'react';
+import {useState} from 'react';
 
 // components
 import AppHeader from "../appHeader/AppHeader";
