@@ -4,6 +4,7 @@ const useMarvelService = () => {
     const {loading, request, error, clearError} = useHttp();
 
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/characters';
+    const _apiBaseComics = 'https://gateway.marvel.com:443/v1/public/comics?';
     const _apiKey = 'apikey=cba563d54dbd68868980b1b6a1c84860';
     const _basicOffset = 210;
 
@@ -14,6 +15,11 @@ const useMarvelService = () => {
     const getAllCharacters = async (offset = _basicOffset) => {
         const res = await request(`${_apiBase}?limit=9&offset=${offset}&${_apiKey}`);
         return res.data.results.map(_transformData)
+    }
+
+    const getAllComics = async (offset = _basicOffset) => {
+        const res = await request(` ${_apiBaseComics}${_apiKey}`);
+        return res.data.results.map(_transformDataComics)
     }
 
     const getCharacter = async (id) => {
@@ -43,7 +49,16 @@ const useMarvelService = () => {
          }
     }
 
-    return {loading, error, getAllCharacters, getCharacter, clearError}
+    const _transformDataComics = (item) => {
+        return {
+           id: item.id,
+           title: item.title,
+           price: item.prices[0].price !== 0? item.prices[0].price + ' $' : item.prices[0].price,
+           img: item.thumbnail.path + '.' + item.thumbnail.extension,
+        }
+    }
+
+    return {loading, error, getAllCharacters, getCharacter, clearError, getAllComics}
 }
 
 export default useMarvelService;
