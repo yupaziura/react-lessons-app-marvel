@@ -1,31 +1,27 @@
+import {useHttp} from '../hooks/http.hooks';
+
+const useMarvelService = () => {
+    const {loading, request, error, clearError} = useHttp();
+
+    const _apiBase = 'https://gateway.marvel.com:443/v1/public/characters';
+    const _apiKey = 'apikey=cba563d54dbd68868980b1b6a1c84860';
+    const _basicOffset = 210;
 
 
-class MarvelService {
-    _apiBase = 'https://gateway.marvel.com:443/v1/public/characters';
-    _apiKey = 'apikey=cba563d54dbd68868980b1b6a1c84860';
-    _basicOffset = 210;
+ 
 
-    getResource = async (url) => {
-        let res = await fetch(url);
 
-        if (!res.ok) {
-            throw new Error (`could not fetch, status ${res.status}`)
-        }
-
-        return await res.json();
+    const getAllCharacters = async (offset = _basicOffset) => {
+        const res = await request(`${_apiBase}?limit=9&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transformData)
     }
 
-    getAllCharacters = async (offset = this._basicOffset) => {
-        const res = await this.getResource(`${this._apiBase}?limit=9&offset=${offset}&${this._apiKey}`);
-        return res.data.results.map(this._transformData)
+    const getCharacter = async (id) => {
+        const res = await request(`${_apiBase}/${id}?${_apiKey}`);
+        return _transformData(res.data.results[0])
     }
 
-    getCharacter = async (id) => {
-        const res = await this.getResource(`${this._apiBase}/${id}?${this._apiKey}`);
-        return this._transformData(res.data.results[0])
-    }
-
-    checkDescr = (descr) => {
+    const checkDescr = (descr) => {
         if (!descr) {
             return 'Sorry, there is no information about this character. Go to homepage.'
         }
@@ -35,17 +31,19 @@ class MarvelService {
         else {return descr}
     }
 
-    _transformData = (char) => {
+    const _transformData = (char) => {
          return {
             id: char.id,
             name: char.name,
-            description: this.checkDescr(char.description),
+            description: checkDescr(char.description),
             thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url,
             comics: char.comics.items
          }
     }
+
+    return {loading, error, getAllCharacters, getCharacter, clearError}
 }
 
-export default MarvelService;
+export default useMarvelService;

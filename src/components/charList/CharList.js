@@ -9,19 +9,17 @@ import Spinner from '../spinner/Spinner';
 import './charList.scss';
 
 // other
-import MarvelService from '../../services/MarverService';
+import useMarvelService from '../../services/MarverService';
 
 const CharList = (props) => {
 
     const [charList, setCharList] = useState([]);
-    const [error, setError] = useState(false);
-    const [loading, setLoading] = useState(true);
     const [newLoading, setNewLoading] = useState(false);
     const [offset, setOffset] = useState(1542);
     const [end, setEnd] = useState(false);
 
 
-    const marverService = new MarvelService();
+    const {loading, error, getAllCharacters} = useMarvelService();
 
     const onCharLoaded = (newChar) => {
         let isEnd;
@@ -32,35 +30,23 @@ const CharList = (props) => {
         
 
         setCharList(charList => [...charList, ...newChar]);
-        setLoading(false);
         setNewLoading(false);
         setOffset(offset + 9);
         setEnd(isEnd);
     }
 
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-        setNewLoading(false);
+
+    const onRequest = (offset, init) => {
+        init ?  setNewLoading(false) :  setNewLoading(true);
+       
+        
+            getAllCharacters(offset)
+            .then(onCharLoaded);
+            
     }
 
 
-    const omListLoading = () => {
-        setNewLoading(true)
-    }
-
-
-
-    const onRequest = (offset) => {
-        omListLoading();
-        marverService
-            .getAllCharacters(offset)
-            .then(onCharLoaded)
-            .catch(onError);
-    }
-
-
-    useEffect(() => {onRequest()}, [])
+    useEffect(() => {onRequest(offset, true)}, [])
 
 
     const selectChar = (item) => {
@@ -74,8 +60,8 @@ const CharList = (props) => {
                             selectChar={selectChar}
     />
 
-    const list = charList? elem : null;
-    const spinner = loading? <Spinner/> : null;
+    
+    const spinner = loading && !newLoading? <Spinner/> : null;
     const errorMess = error? <ErrorMessage/> : null;
 
     return (
@@ -83,7 +69,7 @@ const CharList = (props) => {
             <ul className="char__grid">
                 {spinner}
                 {errorMess}
-                {list}
+                {elem}
             </ul>
             <button className="button button__main button__long"
                     disabled={newLoading}

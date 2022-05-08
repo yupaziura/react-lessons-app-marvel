@@ -10,7 +10,7 @@ import Skeleton from '../skeleton/Skeleton';
 import './charInfo.scss';
 
 // other
-import MarvelService from '../../services/MarverService';
+import useMarvelService from '../../services/MarverService';
 
 
 
@@ -18,36 +18,24 @@ import MarvelService from '../../services/MarverService';
 const CharInfo = (props) => {
 
     const [charData, setCharData] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
 
-    const marverService = new MarvelService();
+    const {loading, error, getCharacter, clearError} =  useMarvelService();
 
     const onCharLoaded = (char) => {
         setCharData(char);
-        setLoading(false);
-    }
-
-    const onError = () => {
-        setLoading(false);
-        setError(true);
-    }
-
-    const onCharLoading = () => {
-        setLoading(true);
     }
 
 
     const updateChar = () => {
+        
         if(!props.charId) {
             return;
         }
 
-        onCharLoading();
-        marverService
-            .getCharacter(props.charId)
-            .then(onCharLoaded)
-            .catch(onError)
+        clearError();
+       getCharacter(props.charId)
+            .then(onCharLoaded);
+           
     }
 
 
