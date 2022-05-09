@@ -29,8 +29,6 @@ const ComicsList = () => {
 
             getAllComics(offset, limit).then(onLoaded);
 
-            console.log(data);
-            console.log(offset)
         }
     
     
