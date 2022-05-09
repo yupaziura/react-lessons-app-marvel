@@ -1,6 +1,12 @@
 import { Link, NavLink } from 'react-router-dom';
 import './appHeader.scss';
 
+// to create links to swich between pages
+// create Link instead a
+// or LinkNav to set styles to active component
+// instead href use to
+// where pass path from Route
+
 const AppHeader = () => {
     return (
         <header className="app__header">
