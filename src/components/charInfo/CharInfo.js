@@ -1,5 +1,7 @@
 // basic
 import {useState, useEffect} from 'react';
+import useMarvelService from '../../services/MarverService';
+
 
 // components
 import Spinner from '../spinner/Spinner';
@@ -8,9 +10,6 @@ import Skeleton from '../skeleton/Skeleton';
 
 // style
 import './charInfo.scss';
-
-// other
-import useMarvelService from '../../services/MarverService';
 
 
 
@@ -33,7 +32,7 @@ const CharInfo = (props) => {
         }
 
         clearError();
-       getCharacter(props.charId)
+        getCharacter(props.charId)
             .then(onCharLoaded);
            
     }
