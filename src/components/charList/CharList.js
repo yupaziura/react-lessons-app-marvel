@@ -1,5 +1,6 @@
 //basic
 import React, {useState, useEffect } from 'react';
+import Skeleton from '../skeleton/Skeleton';
 
 // components
 import ErrorMessage from '../errorMessage/error';
@@ -18,8 +19,28 @@ const CharList = (props) => {
     const [offset, setOffset] = useState(1542);
     const [end, setEnd] = useState(false);
 
+    const setContent = (process, selectChar, charList, newLoading) => {
+        switch (process) {
+            case 'waiting':
+                return <Skeleton/>
+                break;
+            case 'loading': 
+                return newLoading? <ListItem selectChar={selectChar} charList={charList}/> :  <Spinner/>
+                break;
+            case 'confirmed':
+                return <ListItem selectChar={selectChar} charList={charList}/>;
+                break
+            case 'error' :
+                return <ErrorMessage/>
+                break;
+    
+            default :
+                throw new Error('unexpected error')
+        }
+    }
 
-    const {loading, error, getAllCharacters} = useMarvelService();
+
+    const {loading, error, getAllCharacters,process, setProcess} = useMarvelService();
 
     const onCharLoaded = (newChar) => {
         let isEnd;
@@ -41,7 +62,8 @@ const CharList = (props) => {
        
         
             getAllCharacters(offset)
-            .then(onCharLoaded);
+            .then(onCharLoaded)
+            .then(()=> setProcess('confirmed'));
             
     }
 
@@ -56,9 +78,6 @@ const CharList = (props) => {
 
 
 
-    const elem = <ListItem charList={charList}
-                            selectChar={selectChar}
-    />
 
     
     const spinner = loading && !newLoading? <Spinner/> : null;
@@ -67,9 +86,7 @@ const CharList = (props) => {
     return (
         <div className="char__list" key={0}>
             <ul className="char__grid">
-                {spinner}
-                {errorMess}
-                {elem}
+                {setContent(process, selectChar, charList, newLoading)}
             </ul>
             <button className="button button__main button__long"
                     disabled={newLoading}
