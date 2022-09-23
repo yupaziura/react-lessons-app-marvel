@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import {useParams, Link } from 'react-router-dom';
 import useMarvelService from '../../services/MarverService';
+import { Helmet } from 'react-helmet';
 
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/error';
@@ -40,6 +41,13 @@ const SingleComicPage = () => {
     const errorState = error? <ErrorMessage/> : null;
     const spinner = loading? <Spinner/> : null;
     const element = !loading && !error ? <>
+        <Helmet>
+            <meta
+                name="description"
+                content={`${data.title} comic book`}
+            />
+            <title>{data.title}</title>
+        </Helmet>
         <img src={data.img} alt="x-men" className="single-comic__img"/>
             <div className="single-comic__info">
                 <h2 className="single-comic__name">{data.title}</h2>
