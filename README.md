@@ -1,6 +1,6 @@
 # This is a Marvel educational project 🦸🏼
 
-## Achivements ✅
+## Achivements ⭐️
 
 - React usage
 - create class components
